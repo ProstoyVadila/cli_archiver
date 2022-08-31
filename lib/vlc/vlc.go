@@ -17,14 +17,44 @@ func Encode(str string) string {
 	return chunks.ToHex().ToString() // "2F 4A 3F ..."
 }
 
-// My Text -> !my !text
+func Decode(encodedText string) string {
+	// hex chunks -> binary chunks
+	// binary chunks -> binary string
+	bString := NewHexChunks(encodedText).ToBinary().Join()
+	// build decoding tree
+	dTree := getEncodingTable().DecodingTree()
+	// dTree -> text
+	text := dTree.Decode(bString)
+	return exportText(text)
+}
+
+// My lovely Text -> !my lovely !text
 func prepareText(str string) string {
 	var buf strings.Builder
-
 	for _, val := range str {
 		if unicode.IsUpper(val) {
 			buf.WriteRune('!')
 			buf.WriteRune(unicode.ToLower(val))
+		} else {
+			buf.WriteRune(val)
+		}
+	}
+	return buf.String()
+}
+
+// !my lovely !text -> My lovely Text
+func exportText(str string) string {
+	var buf strings.Builder
+	var isCapital bool
+	for _, val := range str {
+		if isCapital {
+			buf.WriteRune(unicode.ToUpper(val))
+			isCapital = false
+			continue
+		}
+		if val == '!' {
+			isCapital = true
+			continue
 		} else {
 			buf.WriteRune(val)
 		}

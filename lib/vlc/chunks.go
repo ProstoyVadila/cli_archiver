@@ -14,9 +14,18 @@ type HexChunks []HexChunk
 type BinaryChunks []BinaryChunk
 
 const chunksSize = 8
+const hexChunksSeparator = " "
+
+func NewHexChunks(str string) HexChunks {
+	parts := strings.Split(str, hexChunksSeparator)
+	res := make(HexChunks, 0, len(parts))
+	for _, part := range parts {
+		res = append(res, HexChunk(part))
+	}
+	return res
+}
 
 func (hcs HexChunks) ToString() string {
-	const sep = " "
 	switch len(hcs) {
 	case 0:
 		return ""
@@ -27,8 +36,35 @@ func (hcs HexChunks) ToString() string {
 	for i, hc := range hcs {
 		buf.WriteString(string(hc))
 		if i+1 != len(hcs) {
-			buf.WriteString(sep)
+			buf.WriteString(hexChunksSeparator)
 		}
+	}
+	return buf.String()
+}
+
+func (hcs HexChunks) ToBinary() BinaryChunks {
+	res := make(BinaryChunks, 0, len(hcs))
+	for _, chunk := range hcs {
+		bChunk := chunk.ToBinary()
+		res = append(res, bChunk)
+	}
+	return res
+}
+
+func (hc HexChunk) ToBinary() BinaryChunk {
+	num, err := strconv.ParseUint(string(hc), 16, chunksSize)
+	if err != nil {
+		panic("can not parse hex chunk: " + err.Error())
+	}
+	return BinaryChunk(fmt.Sprintf("%08b", num))
+}
+
+// Joins chunk into one line
+func (bcs BinaryChunks) Join() string {
+	var buf strings.Builder
+
+	for _, bc := range bcs {
+		buf.WriteString(string(bc))
 	}
 	return buf.String()
 }
