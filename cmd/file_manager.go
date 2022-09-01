@@ -14,11 +14,19 @@ import (
 )
 
 const permissionLevel fs.FileMode = 0644
-const packedExtension = "vlc"
-const unpackedExtension = "txt"
 
 var ErrEmptyPath = errors.New("path to file is not specified")
 var ErrUnknownMethod = errors.New("unknown method")
+
+type CompressionMethod struct {
+	name           string
+	encoderDecoder compression.EncoderDecoder
+	extension      FileExtension
+}
+type FileExtension struct {
+	packed   string
+	unpacked string
+}
 
 func manageFile(cmd *cobra.Command, args []string, isPacking bool) error {
 	if len(args) == 0 || args[0] == "" {
@@ -32,18 +40,19 @@ func manageFile(cmd *cobra.Command, args []string, isPacking bool) error {
 	}
 
 	method := cmd.Flag("method").Value.String()
-	encoderDecoder, err := getCompressionMethod(method)
+	compressionMethod, err := getCompressionMethod(method)
 	if err != nil {
 		return err
 	}
 
 	var performedData []byte
 	if isPacking {
-		performedData = encoderDecoder.Encode(string(data))
+		performedData = compressionMethod.encoderDecoder.Encode(string(data))
 	} else {
-		performedData = []byte(encoderDecoder.Decode(data))
+		performedData = []byte(compressionMethod.encoderDecoder.Decode(data))
 	}
-	err = writeFile(packedFileName(filePath, isPacking), performedData, permissionLevel)
+	newFileName := archivedFileName(filePath, isPacking, compressionMethod.extension)
+	err = writeFile(newFileName, performedData, permissionLevel)
 	if err != nil {
 		return err
 	}
@@ -69,23 +78,25 @@ func writeFile(filepath string, data []byte, perm fs.FileMode) error {
 }
 
 // convert /path/to/file.txt -> file.vlc
-func packedFileName(path string, isPacking bool) string {
+func archivedFileName(path string, isPacking bool, fileExtension FileExtension) string {
 	var extension string
 	if isPacking {
-		extension = packedExtension
+		extension = fileExtension.packed
 	} else {
-		extension = unpackedExtension
+		extension = fileExtension.unpacked
 	}
 	fileName := filepath.Base(path)
 	baseName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	return baseName + "." + extension
 }
 
-func getCompressionMethod(method string) (compression.EncoderDecoder, error) {
+func getCompressionMethod(method string) (CompressionMethod, error) {
 	switch method {
 	case "vlc":
-		return vlc.New(), nil
+		fileExtension := FileExtension{packed: method, unpacked: "txt"}
+		archiveMethod := CompressionMethod{name: method, encoderDecoder: vlc.New(), extension: fileExtension}
+		return archiveMethod, nil
 	default:
-		return nil, ErrUnknownMethod
+		return CompressionMethod{}, ErrUnknownMethod
 	}
 }
