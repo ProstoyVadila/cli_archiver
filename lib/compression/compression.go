@@ -7,3 +7,8 @@ type Encoder interface {
 type Decoder interface {
 	Decode(data []byte) string
 }
+
+type EncoderDecoder interface {
+	Encoder
+	Decoder
+}

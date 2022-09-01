@@ -5,13 +5,13 @@ import (
 	"unicode"
 )
 
-type EncdoderDecoder struct{}
+type EncoderDecoder struct{}
 
-func New() EncdoderDecoder {
-	return EncdoderDecoder{}
+func New() EncoderDecoder {
+	return EncoderDecoder{}
 }
 
-func (_ EncdoderDecoder) Encode(str string) []byte {
+func (_ EncoderDecoder) Encode(str string) []byte {
 	// prepare text A -> !a
 	str = prepareText(str)
 	// encode to binary: some text -> 10101010
@@ -21,7 +21,7 @@ func (_ EncdoderDecoder) Encode(str string) []byte {
 	return chunks.Bytes()
 }
 
-func (_ EncdoderDecoder) Decode(data []byte) string {
+func (_ EncoderDecoder) Decode(data []byte) string {
 	// hex chunks -> binary chunks
 	// binary chunks -> binary string
 	bString := NewBinChunks(data).Join()
