@@ -4,6 +4,7 @@ FILEPATH=examples
 
 build:
 	@echo "\n > Building binary for $(PROJECTNAME)..."
+	go get
 	go build
 tests:
 	@echo "\n > Running unit tests..."
