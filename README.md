@@ -3,8 +3,17 @@ It can pack and unpack files with shannon-fano algo
 
 ## Usage
 ```bash
+make build
 ./archiver pack -m shannon_fano file.txt
 ./archiver unpack -m shannon_fano file.vlc 
+```
+### Run unit-tests
+```bash
+make tests
+```
+### Run integration-tests
+```bash
+make all
 ```
 
 ## TODO
