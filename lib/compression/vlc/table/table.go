@@ -16,13 +16,18 @@ type DecodingTree struct {
 
 type EncodingTable map[rune]string
 
-func (et EncodingTable) DecodingTree() DecodingTree {
+func (et EncodingTable) decodingTree() DecodingTree {
 	res := DecodingTree{}
 
 	for runeKey, code := range et {
 		res.add(code, runeKey)
 	}
 	return res
+}
+
+func (et EncodingTable) Decode(str string) string {
+	dt := et.decodingTree()
+	return dt.Decode(str)
 }
 
 func (dt *DecodingTree) Decode(str string) string {

@@ -3,6 +3,8 @@ package cmd
 import (
 	"archiver/lib/compression"
 	"archiver/lib/compression/vlc"
+	shannonfano "archiver/lib/compression/vlc/table/shannon_fano"
+
 	"errors"
 	"io"
 	"io/fs"
@@ -94,7 +96,11 @@ func getCompressionMethod(method string) (CompressionMethod, error) {
 	switch method {
 	case "vlc":
 		fileExtension := FileExtension{packed: method, unpacked: "txt"}
-		archiveMethod := CompressionMethod{name: method, encoderDecoder: vlc.New(), extension: fileExtension}
+		archiveMethod := CompressionMethod{
+			name:           method,
+			encoderDecoder: vlc.New(shannonfano.NewGenerator()),
+			extension:      fileExtension,
+		}
 		return archiveMethod, nil
 	default:
 		return CompressionMethod{}, ErrUnknownMethod
