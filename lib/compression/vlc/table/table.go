@@ -1,6 +1,12 @@
-package vlc
+package table
 
-import "strings"
+import (
+	"strings"
+)
+
+type Generator interface {
+	NewTable(text string) EncodingTable
+}
 
 type DecodingTree struct {
 	Value string
@@ -8,11 +14,13 @@ type DecodingTree struct {
 	One   *DecodingTree
 }
 
-func (et encodingTable) DecodingTree() DecodingTree {
+type EncodingTable map[rune]string
+
+func (et EncodingTable) DecodingTree() DecodingTree {
 	res := DecodingTree{}
 
 	for runeKey, code := range et {
-		res.Add(code, runeKey)
+		res.add(code, runeKey)
 	}
 	return res
 }
@@ -42,7 +50,7 @@ func (dt *DecodingTree) Decode(str string) string {
 	return buf.String()
 }
 
-func (dt *DecodingTree) Add(code string, value rune) {
+func (dt *DecodingTree) add(code string, value rune) {
 	currentNode := dt
 	for _, char := range code {
 		switch char {
