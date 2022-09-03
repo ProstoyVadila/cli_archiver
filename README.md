@@ -1,7 +1,7 @@
 # Simple file archiver
 It can pack and unpack files with shannon-fano algo
 
-##Usage
+## Usage
 ```bash
 ./archiver pack -m shannon_fano file.txt
 ./archiver unpack -m shannon_fano file.vlc 
