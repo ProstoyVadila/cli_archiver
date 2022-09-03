@@ -94,8 +94,8 @@ func archivedFileName(path string, isPacking bool, fileExtension FileExtension) 
 
 func getCompressionMethod(method string) (CompressionMethod, error) {
 	switch method {
-	case "vlc":
-		fileExtension := FileExtension{packed: method, unpacked: "txt"}
+	case "shannon_fano":
+		fileExtension := FileExtension{packed: "vlc", unpacked: "txt"}
 		archiveMethod := CompressionMethod{
 			name:           method,
 			encoderDecoder: vlc.New(shannonfano.NewGenerator()),
