@@ -1,5 +1,6 @@
-# Simple file archiver
-It can pack and unpack files with shannon-fano algo
+# A simple file archiver
+It can pack and unpack files with shannon-fano algo.
+Based on Nikolay Tuzov youtube lessons.
 
 ## Usage
 ```bash
@@ -17,6 +18,7 @@ make all
 ```
 
 ## TODO
-1. Refactoring (project structure mainly)
-2. Rewrite tests for vlc
-3. Adding logic with static encoding table
+1. Refactor (project structure mainly).
+2. Rewrite tests for vlc.
+3. Add logic with static encoding table.
+4. Add support for another algorithms.
